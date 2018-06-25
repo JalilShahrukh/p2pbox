@@ -7,8 +7,11 @@
 <body>
   <h1>Realtime communication with WebRTC</h1>
   <div>
-      <button id="input"> Input button </button>
+    <button id="upload" multiple="false" accept="image/*">Upload button</button>
+    <button id="input" multiple="false" accept="image/*">Input button</button>
   </div>
+  <input type="file" id="getval" />
+  <div id="image"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
   <script src="http://localhost:3000/myJS"> </script>

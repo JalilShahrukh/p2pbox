@@ -33,15 +33,9 @@ io.on('connection', function(socket) {
         console.log(messageReceived);
         socket.emit('message', 'you sent a message');
         socket.broadcast.emit('message', messageReceived);
-    })
-
-    // socket.on('disconnect', function(socket) { 
-    //     clientsInRoom = io.sockets.adapter.rooms['myroom2'];
-    //     numClients = clientsInRoom ? Object.keys(clientsInRoom.sockets).length : 0; 
-    //     console.log('nunClients is', numClients);
-    // });    
+    });
 
     console.log('nunClients is', numClients);
-})
+});
 
 server.listen(3000, () => console.log('Listening on port 3000'));
