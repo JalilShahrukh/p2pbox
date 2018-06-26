@@ -3,10 +3,6 @@
 let initiator = false;
 let config = null;
 console.log('Running index.js');
-var img = document.getElementById('image'); 
-var imgContext = img.getContext('2d'); 
-var imgHeight = img.height; 
-var imgWidth = img.width; 
 
 const socket = io.connect('http://localhost:3000');
 // document.getElementById('image').src = './scene.jpg'; 
@@ -15,10 +11,7 @@ input.addEventListener('click', () => {
     // socket.emit('message', 'Hi there!');
     // dataChannel.send('Wait....whats up bitch????')
     console.log('Hello'); 
-    let link = document.createElement('li'); 
-    link.innerText = 'Hello';  
-    document.getElementById('list').appendChild(link);
-    sendData();
+    sendPhoto();
 })
 
 socket.on('message', (input) => {
@@ -28,10 +21,10 @@ socket.on('message', (input) => {
 
 socket.on('created', () => {
     initiator = true;
-    var img = document.createElement('div');
-    img.src = '/image';  
-    document.getElementById('container').appendChild(img); 
-    // renderImage(); 
+    // var img = document.createElement('div');
+    // img.src = '/image';  
+    // document.getElementById('container').appendChild(img); 
+    renderImage(); 
     // console.log('I created the room')
 })
 
@@ -49,9 +42,9 @@ socket.on('ready', () => {
 let pc;
 let dataChannel;
 
-// renderImage = () => { 
-//   document.getElementById('image').src = '/image'; 
-// }
+renderImage = () => { 
+  document.getElementById('image').src = '/image'; 
+}
 
 createPeerConnection = () => {
     console.log('Creating peer connection!');
