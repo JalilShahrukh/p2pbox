@@ -5,9 +5,24 @@ const path = require('path');
 const app = express(); 
 const server = http.Server(app); 
 const io = socketIO(server);
+const mongoose = require('mongoose');
+
+const uri = 'mongodb://starfish4:admin1@ds039441.mlab.com:39441/starfish4';
+mongoose.connect(uri);
+mongoose.connection.once('open', () => { 
+  console.log('Connected to Database'); 
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.html'));
+});
+
+app.get('/image', (req, res) => { 
+    res.sendFile(path.join(__dirname, './../client/scene.jpg'));
+});
+
+app.get('/css', (req, res) => { 
+    res.sendFile(path.join(__dirname, './../client/styles.css'));
 });
 
 app.get('/myJS', (req, res) => {
