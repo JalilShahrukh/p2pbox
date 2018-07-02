@@ -6,6 +6,12 @@ const app = express();
 const server = http.Server(app); 
 const io = socketIO(server);
 const mongoose = require('mongoose');
+const imageController = require('./imageController');
+const bodyParser = require('body-parser'); 
+const fs = require('fs'); 
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 const uri = 'mongodb://starfish4:admin1@ds039441.mlab.com:39441/starfish4';
 mongoose.connect(uri);
@@ -14,21 +20,55 @@ mongoose.connection.once('open', () => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './../client/index.html'));
+  res.sendFile(path.join(__dirname, './../client/index.html'));
 });
 
 app.get('/image', (req, res) => { 
-    res.sendFile(path.join(__dirname, './../client/scene.jpg'));
+  res.sendFile(path.join(__dirname, './../client/scene.jpg'));
 });
 
 app.get('/css', (req, res) => { 
-    res.sendFile(path.join(__dirname, './../client/styles.css'));
+  res.sendFile(path.join(__dirname, './../client/styles.css'));
 });
 
 app.get('/myJS', (req, res) => {
-    console.log('Found new route');
-    res.sendFile(path.join(__dirname, './../client/index.js'))
-})
+  console.log('Found new route');
+  res.sendFile(path.join(__dirname, './../client/index.js'))
+});
+
+//app.get('/getFile', imageController.findImage); 
+
+app.get('/video', function(req, res) { 
+  const path = 'demo/demo.mp4'; //Change to actual route. 
+  const stat = fs.statSync(path); //Provides information about a file.
+  const fileSize = stat.size; //Size of file. 
+  const range = req.headers.range; //The Range HTTP request header indicates the part of a document that the server should return.
+
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-")
+    const start = parseInt(parts[0], 10)
+    const end = parts[1] 
+      ? parseInt(parts[1], 10)
+      : fileSize-1
+    const chunksize = (end-start)+1
+    const file = fs.createReadStream(path, {start, end})
+    const head = {
+      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': chunksize,
+      'Content-Type': 'video/mp4',
+    }
+    res.writeHead(206, head);
+    file.pipe(res);
+  } else {
+    const head = {
+      'Content-Length': fileSize,
+      'Content-Type': 'video/mp4',
+    }
+    res.writeHead(200, head)
+    fs.createReadStream(path).pipe(res)
+  }//end if
+}); 
 
 io.on('connection', function(socket) {
     socket.join('myroom2');

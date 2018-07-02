@@ -1,14 +1,16 @@
-const Image = require('./../models/UserModel'); 
+const Image = require('./imageModel'); 
 const imageController = {}; 
 
 imageController.findImage = (req, res) => { 
   console.log('Inside of find image.'); 
-  Image.find({}, (req, images) => { 
+  Image.find({}, (err, image) => { 
     if (err) { 
       console.log(err); 
-      res.send({error: 'Could not find all tasks.'});
-    } else {
-      res.status(200).send(images);  
+      res.send({error: 'Image not found.'}); 
+    } else { 
+      res.status(200).send(image); 
     }//end if else
   });    
 } 
+
+module.exports = imageController; 
