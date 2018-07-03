@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+  <title>WebRTC WebMetrics</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<html>
+  <body>
+    <div class="flex-cotainer">
+      <div class="flex" id="without">
+        Without WebRTC connection.
+      </div>
+      <div class="flex">
+        With WebRTC connection.
+      </div>
+    </div>
+  </body>
+  <script>
+    $.ajax({
+      url: window.location.href,
+      method: 'GET',
+      start_time: new Date().getTime(),
+      complete: function(data) {
+       document.getElementById('without').innerText = ('This request took ' + (new Date().getTime() - this.start_time)+' ms');
+      }
+    });
+  </script>
+</html>
