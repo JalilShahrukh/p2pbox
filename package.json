@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "http": "0.0.0",
+    "jquery": "^3.3.1",
     "path": "^0.12.7",
     "socket.io": "^2.1.1"
   }
