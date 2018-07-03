@@ -1,258 +1,181 @@
-/****************************************************************************
-* GLOBAL VARIABLES
-****************************************************************************/
+let initiator = false;
+let config = null;
+let imageArray = Object.values(document.getElementsByTagName('img'));
 
-var config = null; //Initial config, changed to persons. 
-
-var localConnection; 
-var remoteConnection; 
-var sendChannel; 
-var ReceiveChannel;
-
-var receiveBuffer = [];  
-var receivedSize = 0; 
-
-var initiator = false; //Changed to true when first person enters room.
-var bitrateDiv = document.querySelector('div#bitrate'); //Used to display stats of file transfer. 
-var fileInput = document.querySelector('input#fileInput'); //Takes in any file.
-var downloadAnchor = document.querySelector('a#download'); //Lets you download file. 
-var sendProgress = document.querySelector('progress#sendProgress'); //Progress on file sent. 
-var receiveProgress = document.querySelector('progress#receiveProgress'); //Progress on file Received. Same as send.
-var statusMessage = document.querySelector('span#status'); //Used to display status of file. 
-var bytesPrev = 0;//Used to calculate bitrate. 
-var timeStampStart; //Start of timestamp. 
-var timestampPrev = 0;//Used to check time stamp. 
-var bitrateMax = 0; //Used to update max bitrate. 
-var statsInterval = null;//Use for Receive data channel function.
-var appendTo = document.querySelector('div#received'); //Div to append recieved object to.
-var getButton = document.querySelector('button#get'); //Button for getting video. 
-var video = document.querySelector('div#videoPlayer'); //Div to append video to. 
-
-/****************************************************************************
-* Handle get request for video. 
-****************************************************************************/
-
-// getButton.addEventListener('click', () => { 
-//   fetch('/video')
-// 	.then((response) => {
-// 		return response.json();
-// 	}).then((myJson) => {
-// 		console.log(myJson);
-// 	}); 
-// }); 
-
-/****************************************************************************
-* FileInput
-****************************************************************************/
-
-handleInputFile = () => { 
-  var file = fileInput.files[0]; //If the user selects just one file, it is then only necessary to consider the first file of the list.
-  if (!file) console.log('Files must be selected.')
-  else createPeerConnection(); 
-}
-
-fileInput.addEventListener('change', handleInputFile, false); //Invoke callback on change of input file.
-
-/****************************************************************************
-* Signaling server
-****************************************************************************/
+let pc;
+let dataChannel;
 
 const socket = io.connect('http://localhost:3000');
 
-// socket.on('message', (input) => {
-//   signalingMessageCallback(input);
-// }); 
+socket.on('message', (input) => {
+    signalingMessageCallback(input);
+})
 
 socket.on('created', () => {
-  initiator = true;
-  console.log('You are the initiator.'); 
-}); 
+    initiator = true;
+    getImagesFromServer();
+})
 
 socket.on('joined', () => {
-  //createPeerConnection();
-  console.log('You just joined the room.');
-});
+    createPeerConnection();
+})
 
-// socket.on('ready', () => {
-//   console.log('Establishing connection with new peer.'); 
-//   //createPeerConnection();
-// });
+socket.on('ready', () => {
+    createPeerConnection();
+})
 
-/****************************************************************************
-* WebRTC peer connection and data channel
-****************************************************************************/
+////////////////////////////////////////////////////// Photo functions //////////////////////////////////////////////////////
 
-//Sends a message to the signaling server. 
+/// For base initiator
+function getImagesFromServer() {
+    imageArray.forEach(image => {
+        image.id === 'image1' ? image.setAttribute('src', 'https://source.unsplash.com/pHANr-CpbYM/800x600') :
+        image.setAttribute('src', 'https://source.unsplash.com/3Z70SDuYs5g/800x600');
+    })
+}
+
+function sendAllPhotos() {
+    imageArray.forEach(image => {
+        console.log('Sending', image.id);
+        sendPhoto(image);
+    })
+}
+
+function sendPhoto(image) {
+    const data = getImageData(image);
+    // console.log('Image data is:', data);
+    const CHUNK_LEN = 64000;
+    const totalChunks = data.length / CHUNK_LEN;
+    // console.log('This many chunks to send:', totalChunks);
+
+    let start;
+    let end;
+    for (let i = 0; i < totalChunks; i++) {
+        // console.log('Sending chunk', i);
+        start = i * CHUNK_LEN;
+        end = (i + 1) * CHUNK_LEN;
+        dataChannel.send(data.slice(start, end));
+    }
+    dataChannel.send('finished');
+    // console.log('Finished sending that photo');
+}
+
+function getImageData(image) {
+    let canvas = document.createElement('canvas');
+    let context = canvas.getContext('2d');
+    context.canvas.width = image.width;
+    context.canvas.height = image.height;
+    context.drawImage(image, 0, 0, image.width, image.height);
+    return canvas.toDataURL('image/jpeg')
+}
+
+function receiveData() {
+    let imageData = '';
+    let counter = 0;
+    let dataString;
+    return function onMessage(data) {
+        dataString = data.data.toString();
+        // console.log('Running onMessage, dataString is:', dataString);
+        if (dataString.slice(0, 8) !== 'finished') {
+            // console.log('Adding this datastring in');
+            imageData += dataString;
+        } else {
+            // console.log('Finished, calling setImage');
+            setImage(imageData, counter);
+            counter++;
+            imageData = '';
+        }
+    }
+}
+
+function setImage(imageData, counter) {
+    // console.log('In setImage');
+    imageArray[counter].src = imageData;
+}
+
+////////////////////////////////////////////////////// Signaling functions //////////////////////////////////////////////////////
+
+function createPeerConnection() {
+    // console.log('Creating peer connection!');
+    pc = new RTCPeerConnection(config);
+    pc.onicecandidate = (event) => {
+        if (event.candidate) {
+            // console.log('onicecandidate event is:', event.candidate);
+            sendMessage({
+                type: 'candidate',
+                label: event.candidate.sdpMLineIndex,
+                id: event.candidate.sdpMid,
+                candidate: event.candidate.candidate
+            })
+        }
+        // else console.log('Out of candidates');
+    }
+    if (initiator) {
+        // Create the data channel, label it messages
+        dataChannel = pc.createDataChannel('messages');
+        // Set up handlers for new data channel
+        onDataChannelCreated(dataChannel)
+
+        // Create offer, then pass to onLocalDescription
+        // (which sets as local description and sends it)
+        pc.createOffer(onLocalDescription, logError);
+    }
+    else {
+        // Create an ondatachannel handler to respond
+        // when the data channel from the other client arrives
+        pc.ondatachannel = (event) => {
+            dataChannel = event.channel
+            onDataChannelCreated(dataChannel);
+        }
+    }
+}
+
+function signalingMessageCallback(message) {
+    if (message.type === 'candidate') {
+        // console.log('Received icecandidate:', message.candidate);
+        pc.addIceCandidate(new RTCIceCandidate({candidate: message.candidate}));
+    }
+    else if (message.type === 'answer') {
+        // console.log('Received answer:', message);
+        pc.setRemoteDescription(new RTCSessionDescription(message), () => {}, logError);
+    }
+    else if (message.type === 'offer') {
+        // console.log('Received offer:', message);
+        pc.setRemoteDescription(new RTCSessionDescription(message), () => {}, logError)
+        pc.createAnswer(onLocalDescription, logError);
+    }
+}
+
+function onDataChannelCreated(channel) {
+    channel.onopen = () => {
+        // console.log('Channel opened');
+        if (initiator) {
+            sendAllPhotos();           
+        } 
+    }
+
+    channel.onclose = () => {
+        // console.log('Channel closed');
+    }
+
+    channel.onmessage = receiveData();
+}
+
+function onLocalDescription(desc) {
+    pc.setLocalDescription(desc, () => {
+        // console.log('Sending local description:', pc.localDescription);
+        sendMessage(pc.localDescription)
+    }, logError);
+}
+
+////////////////////////////////////////////////////// Messaging functions //////////////////////////////////////////////////////
+
 function sendMessage(message) {
-  console.log('Client sending message: ', message);
-  socket.emit('message', message);
+    socket.emit('message', message);
 }
 
-createPeerConnection = () => {
-  localConnection = new RTCPeerConnection(config); //Initialize new connection for local. 
-  console.log('Created local peer connection object.'); 
-  
-  sendChannel = localConnection.createDataChannel('sendDataChannel'); //Create send data channel for local connection.
-  console.log('Created send data channel.'); 
-
-  sendChannel.onopen = onSendChannelStateChange; //Change state when channel is opened. 
-  sendChannel.onclose = onSendChannelStateChange; //Change state when channel is close;
-
-  localConnection.onicecandidate = (e) => { //Add an icecandidate to localConnection. 
-    onIceCandidate(localConnection, e); 
-  }; 
-
-  localConnection.createOffer().then( //Create an offer for the local connection. 
-    gotDescription1, 
-    onSessionDescriptionError
-  );  
-
-  remoteConnection = new RTCPeerConnection(config); //Initialize new connection for remote. 
-  remoteConnection.onicecandidate = (e) => { //Add an icecandidate to remoteConnection. 
-    onIceCandidate(remoteConnection, e);   
-  }
-
-  /*The RTCPeerConnection.ondatachannel property is an EventHandler which specifies a 
-  function which is called when the datachannel event occurs on an RTCPeerConnection.*/
-  remoteConnection.ondatachannel = receiveChannelCallback; 
-
-  //The disabled property sets or returns whether a file upload button should be disabled, or not.
-  //fileInput.disabled = true; 
-}
-
-//Session decription error. 
-onSessionDescriptionError = (error) => { 
-  console.log('Failed to create session description: ' + error.toString()); 	
-}
-
-//Check if the connection is local or remote. 
-localOrRemote = (pc) => { 
-  return (pc === localConnection) ? remoteConnection : localConnection; 
-}
-
-//Get name of connection wether local or remote. 
-nameOfConnection = (pc) => { 
-  return (pc === localConnection) ? 'localConnection' : 'remoteConnection'; 
-}
-
-//Adds ice candidate to corresponding peer connection, local or remote. 
-onIceCandidate = (pc, event) => { 
-  localOrRemote(pc).addIceCandidate(event.candidate)
-   .then(() => { 
-     onAddIceCandidateSuccess(pc);  
-   }).catch((err) => { 
-     onAddIceCandidateError(pc); 
-   }); 
-  console.log(nameOfConnection(pc) + 'ICE candidate: \n' + (event.candidate ? event.candidate : '(null)')); 
-}
-
-//Success callback for ice candidate. 
-onAddIceCandidateSuccess = () => { 
-  console.log('AddIceCandidate success.'); 
-}
-
-//Failure callback for ice candidate. 
-onAddIceCandidateError = (error) => { 
-  console.log('Failed to add Ice Candidate: ' + error.toString()); 
-}
-
-//Set localConnection's local description, remoteConnections's local description, createAnswer from remoteConnection.
-gotDescription1 = (desc) => { 
-	localConnection.setLocalDescription(desc); 
-	console.log('Offer from localConnection \n' + desc.sdp);
-	remoteConnection.setRemoteDescription(desc); 
-	remoteConnection.createAnswer()
-	.then( 
-		gotDescription2, 
-		onSessionDescriptionError
-	);
-}
-
-//Set remoteConnection's local description and localConnection's remote description. 
-gotDescription2 = (desc) => { 
-	remoteConnection.setLocalDescription(desc); 
-	console.log('Answer from remoteConnection \n ' + desc.sdp); 
-	localConnection.setRemoteDescription(desc); 
-}
-
-onLocalDescription = desc => {
-  pc.setLocalDescription(desc, () => {
-    console.log('Sending local description:', pc.localDescription);
-    sendMessage(pc.localDescription)
-  }, logError);
-}
-
-function sendData() { 
-  var file = fileInput.files[0]; //If the user selects just one file, it is then only necessary to consider the first file of the list. 
-	
-  //Handle 0 size files.
-  statusMessage.textContent = ''; //Display element in html. 
-  downloadAnchor.textContent = ''; //Display element in html. 
-  if (file.size === 0) { 
-    bitrateDiv.innerHTML = ''; //Display element in html.
-    statusMessage.textContent = 'File is empty, please select a non-empty file'; 
-    //closeDataChannels(); //Called in source code no sure in applicable for us. 
-    return; 
-  }//end if
-
-  sendProgress.max = file.size; //Attribute in HTML. 
-  receiveProgress.max = file.size; //Attribute in HTML. 
-  var chunkSize = 64000; //You can send up to 64kb chunks between same browsers, 16kb between different browsers. Firefox doesn't require chunking?
-  var sliceFile = function(offset) { 
-    var reader = new window.FileReader(); //Object lets web applications asynchronously read the contents of files (or raw data buffers) stored on the user's computer. 
-    reader.onload = (function() { //Property contains an event handler executed when the load event is fired.
-      return function(e) { 
-        sendChannel.send(e.target.result); //What comes back from file reader should be sent through dataChannel.
-        if (file.size > offset + e.target.result.byteLength) { //Offset is an integer called on sliceFile. 
-          window.setTimeout(sliceFile, 0, offset+chunkSize); //Calls sliceFile callback. 
-        }//end if 
-        sendProgress.value = offset + e.target.result.byteLength; //Attribute in HTML
-      }//End function.
-    })(file); 
-    var slice = file.slice(offset, offset + chunkSize); //Create another slice to be sent. 
-    reader.readAsArrayBuffer(slice); //Read another slice. 
-  }; 
-  sliceFile(0); 
-}
-
-//If the send channel is opened send data. 
-onSendChannelStateChange = () => { 
-	var readyState = sendChannel.readyState; //ready state is an object on datachannel. 
-	console.log('Send channel state is: ' + readyState); 
-	if (readyState === 'open') sendData(); 
-}
-
-//Once the state changes for received in data channel call displaystats at three different points? 
-onReceiveChannelStateChange = () => { 
-	var readyState = receiveChannel.readyState; //ready state is an object on Receivechannel. 
-	if (readyState === 'open') { 
-		timeStampStart = (new Date().getTime()); //Set start timestamp to current time. 
-		timestampPrev = timeStampStart; //Set prev to start. 
-    statsInterval = window.setInterval(displayStats, 500); 
-    window.setTimeout(displayStats, 100); 
-    window.setTimeout(displayStats, 300); 
-	}//end if	
-}
-
-//Handles calls for receive channel. 
-receiveChannelCallback = (event) => {
-	console.log('Receive channel callback.'); 
-	receiveChannel = event.channel; //Channel is a property on the event object. 
-	receiveChannel.binaryType = 'arraybuffer'; //The property binaryType on the RTCDataChannel interface is a DOMString which specifies the type of JavaScript object which should be used to represent binary data received on the RTCDataChannel.
-	receiveChannel.onmessage = onReceiveMessageCallback; //The RTCDataChannel.onmessage property stores an EventHandler which specifies a function to be called when the message event is fired on the channel.
-	receiveChannel.onopen = onReceiveChannelStateChange; //Change the state when opened.  
-	receiveChannel.onclose = onReceiveChannelStateChange; //Change the state when closed. 
-
-	receivedSize = 0; //Reset received size to 0; 
-	bitrateMax = 0; //Reset bitrate to 0; 
-
-	//downloadAnchor is the HTML/CSS object which stores information about what's being downloaded. 
-	downloadAnchor.textContent = ''; 
-	downloadAnchor.removeAttribute('download'); 
-	if (downloadAnchor.href) { 
-		URL.revokeObjectURL(downloadAnchor.href); 
-		downloadAnchor.removeAttribute('href'); 
-	}
+function logError(err) {
+    console.log('Error:', err);
 }
 
 //On receive message callback. 

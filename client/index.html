@@ -1,50 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Realtime file transfer with WebRTC datatchannels.</title>
-  <link rel="stylesheet" type="text/css" href="/css"/>
+  <title>P2P Box</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 </head>
 <body>
-  <h1>Realtime file transfer with WebRTC datatchannels.</h1>
+  <h1>P2P Box</h1>
 
-  <section>
-    <form id="fileInfo">
-      <input type="file" id="fileInput" name="files"/>
-    </form>
-
-    <div class="progress"> 
-      <div class="label">Send progress: </div>
-      <progress id="sendProgress" max="0" value="0"></progress>
-    </div>
-
-    <div class="progress">
-      <div class="label">Receive progress: </div>
-      <progress id="receiveProgress" max="0" value="0"></progress>
-    </div>
-
-    <div id="bitrate"></div>
-    <a id="download"></a>
-    <span id="status"></span>
-  </section>
-
-  <!-- <section>
-    <button id="get">Request file</button>
-
-    <div class="progress"> 
-      <div class="label">Send progress: </div>
-      <progress id="sendProgressRequest" max="0" value="0"></progress>
-    </div>
-  
-    <div class="progress">
-      <div class="label">Receive progress: </div>
-      <progress id="receiveProgressRequest" max="0" value="0"></progress>
-    </div>
-  </section>
-
-  <video id="videoPlayer" controls>
-    <source type="video/mp4">
-  </video> -->
-
+  <div>
+    <p> Photos below! </p>
+    <img id='image1' crossOrigin="Anonymous"> </img>
+    <img id='image2' crossOrigin="Anonymous"> </img>
+  </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
   <script src="http://localhost:3000/myJS"></script>
