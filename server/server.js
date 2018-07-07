@@ -5,6 +5,7 @@ const path = require('path');
 const app = express(); 
 const server = http.Server(app); 
 const io = socketIO(server);
+const aws = require('./awsController.js'); 
 
 const inits = new Initiators();
 const initList = inits.list;
@@ -89,9 +90,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.html'));
 });
 
+app.get('/images', aws.getImages); 
+
 app.get('/myJS', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.js'))
-})
+}); 
 
 app.get('/images', (req, res) => {
     console.log('Made correct get request')

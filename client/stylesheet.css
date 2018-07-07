@@ -1,0 +1,7 @@
+#image  { 
+  background-image:url('');
+  background-size: auto;
+  height: auto; 
+  width: auto;
+  border: 1px solid #bbb;
+}
