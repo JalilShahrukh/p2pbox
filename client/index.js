@@ -1,6 +1,8 @@
 let initiator = false;
 let config = null;
 let imageArray = Object.values(document.getElementsByTagName('img'));
+imageArray = imageArray.filter(image => image.hasAttribute('data-p2p'));
+let partnerID;
 
 let pc;
 let dataChannel;
@@ -11,17 +13,22 @@ socket.on('message', (input) => {
     signalingMessageCallback(input);
 })
 
-socket.on('created', () => {
-    initiator = true;
+socket.on('fromServer', () => {
+    console.log('Getting images from server');
     getImagesFromServer();
 })
 
-//Second person to enter the room. 
-socket.on('joined', () => {
+
+socket.on('receiver', (senderID) => {
+    console.log('Time for me to receive');
+    partnerID = senderID;
     createPeerConnection();
 })
 
-socket.on('ready', () => {
+socket.on('sender', (receiverID) => {
+    console.log('Time for me to send');
+    partnerID = receiverID;
+    initiator = true;
     createPeerConnection();
 })
 
@@ -47,16 +54,19 @@ fetch('/images', {
 /// For base initiator
 function getImagesFromServer() {
     imageArray.forEach(image => {
-        image.id === 'image1' ? image.setAttribute('src', 'https://source.unsplash.com/pHANr-CpbYM/800x600') :
-        image.setAttribute('src', 'https://source.unsplash.com/3Z70SDuYs5g/800x600');
+        image.setAttribute('src', (image.getAttribute('data-p2p')))
     })
+    readyToSend();
 }
 
 function sendAllPhotos() {
+    dataChannel.send('starting');
     imageArray.forEach(image => {
         console.log('Sending', image.id);
         sendPhoto(image);
     })
+    dataChannel.send('all-done');
+    readyToSend();
 }
 
 function sendPhoto(image) {
@@ -93,15 +103,18 @@ function receiveData() {
     let dataString;
     return function onMessage(data) {
         dataString = data.data.toString();
-        // console.log('Running onMessage, dataString is:', dataString);
-        if (dataString.slice(0, 8) !== 'finished') {
-            // console.log('Adding this datastring in');
-            imageData += dataString;
-        } else {
-            // console.log('Finished, calling setImage');
+        if (dataString.slice(0, 8) == 'finished') {
             setImage(imageData, counter);
             counter++;
             imageData = '';
+            if (counter === imageArray.length) readyToSend();
+        } else if (dataString.slice(0, 7) === 'all-done') {
+            readyToSend();
+        } else if (dataString.slice(0, 7) === 'starting') {
+            counter = 0;
+            imageData = '';
+        } else {
+           imageData += dataString;
         }
     }
 }
@@ -188,8 +201,13 @@ function onLocalDescription(desc) {
 
 ////////////////////////////////////////////////////// Messaging functions //////////////////////////////////////////////////////
 
+function readyToSend() {
+    console.log('Ready to send!');
+    socket.emit('sendy');
+}
+
 function sendMessage(message) {
-    socket.emit('message', message);
+    socket.emit('message', message, partnerID);
 }
 
 function logError(err) {
