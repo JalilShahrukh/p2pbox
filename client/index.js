@@ -16,6 +16,7 @@ socket.on('created', () => {
     getImagesFromServer();
 })
 
+//Second person to enter the room. 
 socket.on('joined', () => {
     createPeerConnection();
 })
@@ -25,6 +26,23 @@ socket.on('ready', () => {
 })
 
 ////////////////////////////////////////////////////// Photo functions //////////////////////////////////////////////////////
+var results = document.getElementById('results'); 
+fetch('/images', { 
+  method: 'GET', 
+  headers: { 
+    'Content-Type' : 'application/json'
+  }
+}).then((response) => {
+  return response.json(); 
+}).then((myjson) => { 
+  for (let i = 0; i < myjson.length; i++) { 
+    var div = document.createElement('div'); 
+    var image = document.createElement('img'); 
+    image.src = myjson[i]; 
+    div.appendChild(image);
+    results.append(div);
+  }//end for
+});
 
 /// For base initiator
 function getImagesFromServer() {

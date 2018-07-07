@@ -5,14 +5,17 @@ const path = require('path');
 const app = express(); 
 const server = http.Server(app); 
 const io = socketIO(server);
+const aws = require('./awsController.js'); 
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.html'));
 });
 
+app.get('/images', aws.getImages); 
+
 app.get('/myJS', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.js'))
-})
+}); 
 
 io.on('connection', function(socket) {
     socket.join('myroom2');
