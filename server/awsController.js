@@ -5,8 +5,8 @@ awsController.getImages = (req, res) => {
   console.log('Inside of awsController'); 
   AWS.config.update( 
     { 
-      accessKeyId: '', 
-      secretAccessKey: ''
+      accessKeyId: 'AKIAJSYZMY7VXIAL4UFQ', 
+      secretAccessKey: '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'
     }
   ); 
   var s3 = new AWS.S3(); 
@@ -18,6 +18,7 @@ awsController.getImages = (req, res) => {
     } else {
       for(let i = 1; i < data.Contents.length; i++) { 
         images.push('https://s3.amazonaws.com/' + bucket.config.params.Bucket + '/' + data.Contents[i].Key);
+        console.log('https://s3.amazonaws.com/' + bucket.config.params.Bucket + '/' + data.Contents[i].Key);
       }
     }
     res.status(200).send(images); 
