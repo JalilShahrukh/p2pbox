@@ -17,7 +17,11 @@ let imageRequests = 0;
 ////////////////////////////// Server routes //////////////////////////////
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './../client/index.html'));
+  res.sendFile(path.join(__dirname, './../client/index.html'));
+});
+
+app.get('/css', (req, res) => { 
+  res.sendFile(path.join(__dirname, './../client/stylesheet.css')); 
 });
 
 // app.get('/images', aws.getImages); 

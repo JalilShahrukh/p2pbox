@@ -36,23 +36,24 @@ socket.on('needData', () => {
 
 ////////////////////////////////////////////////////// Photo functions //////////////////////////////////////////////////////
 
-// var results = document.getElementById('results'); 
-// fetch('/images', { 
-//   method: 'GET', 
-//   headers: { 
-//     'Content-Type' : 'application/json'
-//   }
-// }).then((response) => {
-//   return response.json(); 
-// }).then((myjson) => { 
-//   for (let i = 0; i < myjson.length; i++) { 
-//     var div = document.createElement('div'); 
-//     var image = document.createElement('img'); 
-//     image.src = myjson[i]; 
-//     div.appendChild(image);
-//     results.append(div);
-//   }//end for
-// });
+var results = document.getElementById('results'); 
+fetch('/images', { 
+  method: 'GET', 
+  headers: { 
+    'Content-Type' : 'application/json'
+  }
+}).then((response) => {
+  return response.json(); 
+}).then((myjson) => { 
+  for (let i = 0; i < myjson.length; i++) { 
+    var div = document.createElement('div'); 
+    var image = document.createElement('img'); 
+    image.src = myjson[i]; 
+    image.className = 'images'; 
+    div.appendChild(image);
+    results.append(div);
+  }//end for
+});
 
 let imageNames = ['cliff', 'gooddog', 'lava', 'ocean'];
 
