@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.html'));
 });
 
-// app.get('/images', aws.getImages); 
+// app.get('/imagesAWS', aws.getImages); 
 
 app.get('/myJS', (req, res) => {
     res.sendFile(path.join(__dirname, './../client/index.js'))

@@ -6,7 +6,9 @@ let downloaded = false;
 let pc;
 let dataChannel;
 
-const socket = io.connect('http://ec2-18-188-104-222.us-east-2.compute.amazonaws.com:3000');
+
+const socket = io.connect('localhost:3000');
+// const socket = io.connect('http://ec2-18-188-104-222.us-east-2.compute.amazonaws.com:3000');
 
 socket.on('message', (input) => {
     signalingMessageCallback(input);
@@ -37,7 +39,7 @@ socket.on('needData', () => {
 ////////////////////////////////////////////////////// Photo functions //////////////////////////////////////////////////////
 
 // var results = document.getElementById('results'); 
-// fetch('/images', { 
+// fetch('/imagesAWS', { 
 //   method: 'GET', 
 //   headers: { 
 //     'Content-Type' : 'application/json'
@@ -60,7 +62,8 @@ for (let i = 0; i < imageNames.length; i++) {
     let div = document.createElement('div');
     let image = document.createElement('img');
     image.setAttribute('id', imageNames[i]);
-    image.setAttribute('data-p2p', 'http://ec2-18-188-104-222.us-east-2.compute.amazonaws.com:3000/images/' + imageNames[i]);
+    image.setAttribute('data-p2p', 'http://localhost:3000/images/' + imageNames[i]);
+    // image.setAttribute('data-p2p', 'http://ec2-18-188-104-222.us-east-2.compute.amazonaws.com:3000/images/' + imageNames[i]);
     image.setAttribute('crossOrigin', 'anonymous');
     div.appendChild(image);
     images.append(div);
