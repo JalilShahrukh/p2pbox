@@ -46,6 +46,7 @@ fetch('/images', {
     var div = document.createElement('div'); 
     var image = document.createElement('img'); 
     image.src = myjson[i]; 
+    image.className = 'images'; 
     div.appendChild(image);
     results.append(div);
   }//end for
