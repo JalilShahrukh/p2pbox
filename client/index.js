@@ -1,9 +1,8 @@
 let initiator = false;
 let config = null;
-let imageArray = Object.values(document.getElementsByTagName('img'));
-imageArray = imageArray.filter(image => image.hasAttribute('data-p2p'));
+images = document.getElementById('images');
 let partnerID;
-
+let downloaded = false;
 let pc;
 let dataChannel;
 
@@ -18,7 +17,6 @@ socket.on('fromServer', () => {
     getImagesFromServer();
 })
 
-
 socket.on('receiver', (senderID) => {
     console.log('Time for me to receive');
     partnerID = senderID;
@@ -32,24 +30,44 @@ socket.on('sender', (receiverID) => {
     createPeerConnection();
 })
 
+socket.on('needData', () => {
+    socket.emit('needData', downloaded);
+})
+
 ////////////////////////////////////////////////////// Photo functions //////////////////////////////////////////////////////
-var results = document.getElementById('results'); 
-fetch('/images', { 
-  method: 'GET', 
-  headers: { 
-    'Content-Type' : 'application/json'
-  }
-}).then((response) => {
-  return response.json(); 
-}).then((myjson) => { 
-  for (let i = 0; i < myjson.length; i++) { 
-    var div = document.createElement('div'); 
-    var image = document.createElement('img'); 
-    image.src = myjson[i]; 
+
+// var results = document.getElementById('results'); 
+// fetch('/images', { 
+//   method: 'GET', 
+//   headers: { 
+//     'Content-Type' : 'application/json'
+//   }
+// }).then((response) => {
+//   return response.json(); 
+// }).then((myjson) => { 
+//   for (let i = 0; i < myjson.length; i++) { 
+//     var div = document.createElement('div'); 
+//     var image = document.createElement('img'); 
+//     image.src = myjson[i]; 
+//     div.appendChild(image);
+//     results.append(div);
+//   }//end for
+// });
+
+let imageNames = ['cliff', 'gooddog', 'lava', 'ocean'];
+
+for (let i = 0; i < imageNames.length; i++) {
+    let div = document.createElement('div');
+    let image = document.createElement('img');
+    image.setAttribute('id', imageNames[i]);
+    image.setAttribute('data-p2p', 'http://localhost:3000/images/' + imageNames[i]);
+    image.setAttribute('crossOrigin', 'anonymous');
     div.appendChild(image);
-    results.append(div);
-  }//end for
-});
+    images.append(div);
+}
+
+let imageArray = Object.values(document.getElementsByTagName('img'));
+imageArray = imageArray.filter(image => image.hasAttribute('data-p2p'));
 
 /// For base initiator
 function getImagesFromServer() {
@@ -60,7 +78,7 @@ function getImagesFromServer() {
 }
 
 function sendAllPhotos() {
-    dataChannel.send('starting');
+    // dataChannel.send('starting');
     imageArray.forEach(image => {
         console.log('Sending', image.id);
         sendPhoto(image);
@@ -101,18 +119,14 @@ function receiveData() {
     let imageData = '';
     let counter = 0;
     let dataString;
-    return function onMessage(data) {
-        dataString = data.data.toString();
+    return function onMessage(message) {
+        dataString = message.data.toString();
         if (dataString.slice(0, 8) == 'finished') {
             setImage(imageData, counter);
             counter++;
             imageData = '';
-            if (counter === imageArray.length) readyToSend();
         } else if (dataString.slice(0, 7) === 'all-done') {
             readyToSend();
-        } else if (dataString.slice(0, 7) === 'starting') {
-            counter = 0;
-            imageData = '';
         } else {
            imageData += dataString;
         }
@@ -127,7 +141,7 @@ function setImage(imageData, counter) {
 ////////////////////////////////////////////////////// Signaling functions //////////////////////////////////////////////////////
 
 function createPeerConnection() {
-    // console.log('Creating peer connection!');
+    console.log('Creating peer connection!');
     pc = new RTCPeerConnection(config);
     pc.onicecandidate = (event) => {
         if (event.candidate) {
@@ -142,6 +156,7 @@ function createPeerConnection() {
         // else console.log('Out of candidates');
     }
     if (initiator) {
+        console.log('I am sending!');
         // Create the data channel, label it messages
         dataChannel = pc.createDataChannel('messages');
         // Set up handlers for new data channel
@@ -152,6 +167,7 @@ function createPeerConnection() {
         pc.createOffer(onLocalDescription, logError);
     }
     else {
+        console.log('I am receiving!');
         // Create an ondatachannel handler to respond
         // when the data channel from the other client arrives
         pc.ondatachannel = (event) => {
@@ -202,6 +218,7 @@ function onLocalDescription(desc) {
 ////////////////////////////////////////////////////// Messaging functions //////////////////////////////////////////////////////
 
 function readyToSend() {
+    downloaded = true;
     console.log('Ready to send!');
     socket.emit('sendy');
 }
