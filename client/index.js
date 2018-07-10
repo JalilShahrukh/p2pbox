@@ -46,6 +46,7 @@ for (let i = 0; i < imageNames.length; i++) {
   image.setAttribute('crossOrigin', 'anonymous');
   div.appendChild(image);
   images.append(div);
+
 }
 
 let imageArray = Object.values(document.getElementsByTagName('img'));
@@ -53,6 +54,7 @@ imageArray = imageArray.filter(image => image.hasAttribute('data-p2p'));
 
 /// For base initiator
 function getImagesFromServer() {
+
   imageArray.forEach(image => {
     image.setAttribute('src', (image.getAttribute('data-p2p')))
   })
@@ -61,6 +63,7 @@ function getImagesFromServer() {
 
 function sendAllPhotos() {
     // dataChannel.send('starting');
+
   imageArray.forEach(image => {
     console.log('Sending', image.id);
     sendPhoto(image);
@@ -123,6 +126,7 @@ function setImage(imageData, counter) {
 ////////////////////////////////////////////////////// Signaling functions //////////////////////////////////////////////////////
 
 function createPeerConnection() {
+
   console.log('Creating peer connection!');
   pc = new RTCPeerConnection(config);
   pc.onicecandidate = (event) => {
