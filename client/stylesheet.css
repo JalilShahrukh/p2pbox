@@ -1,5 +1,5 @@
 body {
-  background-color: black;
+  background: black;
   font-family: "Lucida Console";
 }
 
@@ -13,7 +13,7 @@ p {
   text-align: center;
 }
 
-.images  {
+.images {
   text-align: center; 
   border: 2px solid whitesmoke;
   height: auto; 

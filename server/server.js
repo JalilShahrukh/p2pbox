@@ -4,12 +4,11 @@ const http = require('http');
 const path = require('path');
 const app = express(); 
 const server = http.Server(app); 
-const aws = require('./controller/awsController'); 
-const  Initiators = require('./controller/initiatorDataStructure');
+const Initiators = require('./controller/initiatorDataStructure');
 
 const DataPeerConfigurations = { 
   serverThreshold: 2,
-  imageTransfer: false,
+  imageTransfer: true,
   geoConnect: false,
 };
 
@@ -37,12 +36,12 @@ app.get('/images/:imageName', (req, res) => {
 ////////////////////////////// Client Configuration Inputs //////////////////////////////
 
 
-DataPeerInvokation(server, DataPeerConfigurations);
+DataPeerInvocation(server, DataPeerConfigurations);
 
 ////////////////////////////// Socket listeners //////////////////////////////
 
 
-function DataPeerInvokation(server, DataPeerConfigurations) {
+function DataPeerInvocation(server, DataPeerConfigurations) {
 
   // Default Configuration Settings
   DataPeerConfigurations = {... DataPeerConfigurations}
@@ -61,10 +60,14 @@ function DataPeerInvokation(server, DataPeerConfigurations) {
     client.emit('retrieve_data');
 
     client.on('retrieve_data', (downloaded) => {
-      console.log(downloaded);
       if (!downloaded) getData(client, io, DataPeerConfigurations);
       else console.log('We meet again!');
     });
+
+    client.on('initButton', () => {
+      console.log('initNumber:', initNumber);
+      console.log('initList:', initList);
+    })
     
     client.on('sendy', () => {
       inits.add(client.id); 
@@ -78,7 +81,7 @@ function DataPeerInvokation(server, DataPeerConfigurations) {
       if (initList[client.id]) {
       inits.remove(client.id);
       initNumber--;
-                // console.log(initNumber, 'are available');
+      // console.log(initNumber, 'are available');
       } 
       if (currentSenders[client.id]) {
         io.to(currentSenders[client.id]).emit('access_directly_from_server');
@@ -94,44 +97,23 @@ function DataPeerInvokation(server, DataPeerConfigurations) {
 }
 
 function getData(client, io) { 
-  if(DataPeerConfigurations.imageTransfer) {
-    if (initNumber < DataPeerConfigurations.threshold) {
-      client.emit('access_directly_from_server');
-    } else {
-      let assigned = false;
-      let unavailCounter = 0;
-      while (!assigned) {
-      // console.log('nextUp is:', inits.nextUp);
-      if (initList[inits.nextUp].available) {
-        // Start the connection;
-        console.log('Initiating a connection between',inits.nextUp, 'and', client.id);
-        client.emit('receiver', inits.nextUp);
-        io.to(inits.nextUp).emit('sender', client.id);
-        // Remove the sender as an initiator and add to current senders
-        currentSenders[inits.nextUp] = client.id;
-        // console.log('After addition, current senders is:', Object.keys(currentSenders));
-        inits.remove(inits.nextUp);
-        initNumber--;
-        // console.log(initNumber, 'are available');
-        // Iterate nextUp and mark them as assigned
-        inits.nextUp = initList[inits.nextUp].next;
-        assigned = true;
-        } else {
-          unavailCounter++;
-          inits.nextUp = initList[inits.nextUp].next;
-          if (unavailCounter > 5) {
-            // console.log('Too many unavailable');
-            client.emit('access_directly_from_server');
-            assigned = true;
-          }
-        }
-      }
-    }
-  } else {
+  if (!DataPeerConfigurations.imageTransfer) { // Image transfer off
+    console.log('imageTransfer is', DataPeerConfigurations.imageTransfer);
     client.emit('access_directly_from_server');
+  } else if (initNumber < DataPeerConfigurations.serverThreshold) { // Not enough peers
+    console.log('Not starting because initNumber is', initNumber, 'but threshold is', DataPeerConfigurations.serverThreshold);
+    client.emit('access_directly_from_server');
+  } else { // Do the peer connection
+    console.log('inintnumber is', initNumber, 'threshold is', DataPeerConfigurations.serverThreshold)
+    console.log('Initiating a connection between',inits.head, 'and', client.id);
+    client.emit('receiver', inits.head);
+    io.to(inits.head).emit('sender', client.id);
+    currentSenders[inits.head] = client.id;
+    // console.log('After addition, current senders is:', Object.keys(currentSenders));
+    inits.remove(inits.head);
+    initNumber--;
   }
 }
-
 
 server.listen(3000);
 
