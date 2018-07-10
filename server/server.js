@@ -19,18 +19,23 @@ let initNumber = 0;
 const currentSenders = {};
 let imageRequests = 0; // track server, for demonstration purposes 
 
+
 ////////////////////////////// Test Server Routes //////////////////////////////
 
 app.use(express.static(path.join(__dirname, './../client')));
 
 app.get('/images/:imageName', (req, res) => {
-  imageName = req.params.imageName;
-  let url = ('./../Images/' + imageName + '.jpeg');
-  res.sendFile(path.join(__dirname, url))
-  imageRequests++
+    imageName = req.params.imageName;
+    // console.log(imageName);
+    let url = ('./../Images/' + imageName + '.jpg');
+    // console.log(url);
+    res.sendFile(path.join(__dirname, url))
+    imageRequests++
+    console.log('This many total imageRequests:', imageRequests);
 })
 
 ////////////////////////////// Client Configuration Inputs //////////////////////////////
+
 
 DataPeerInvokation(server, DataPeerConfigurations);
 

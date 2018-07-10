@@ -8,7 +8,12 @@ body {
   text-align: center; 
 }
 
-.images  { 
+p {
+  color: white;
+  text-align: center;
+}
+
+.images  {
   text-align: center; 
   border: 2px solid whitesmoke;
   height: auto; 

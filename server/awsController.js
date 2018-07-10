@@ -5,8 +5,8 @@ awsController.getImages = (req, res) => {
   console.log('Inside of awsController'); 
   AWS.config.update( 
     { 
-      accessKeyId: 'AKIAJSYZMY7VXIAL4UFQ', 
-      secretAccessKey: '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'
+      accessKeyId: '', 
+      secretAccessKey: ''
     }
   ); 
   var s3 = new AWS.S3(); 
