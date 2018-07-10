@@ -17,7 +17,11 @@ let imageRequests = 0;
 ////////////////////////////// Server routes //////////////////////////////
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './../client/index.html'));
+  res.sendFile(path.join(__dirname, './../client/index.html'));
+});
+
+app.get('/css', (req, res) => { 
+  res.sendFile(path.join(__dirname, './../client/stylesheet.css')); 
 });
 
 // app.get('/imagesAWS', aws.getImages); 
@@ -29,7 +33,7 @@ app.get('/myJS', (req, res) => {
 app.get('/images/:imageName', (req, res) => {
     imageName = req.params.imageName;
     // console.log(imageName);
-    let url = ('./../Images/' + imageName + '.jpeg');
+    let url = ('./../Images/' + imageName + '.jpg');
     // console.log(url);
     res.sendFile(path.join(__dirname, url))
     imageRequests++
@@ -45,6 +49,11 @@ io.on('connection', function(socket) {
     socket.on('needData', (downloaded) => {
         if (!downloaded) getData();
         else console.log('We meet again!');
+    })
+
+    socket.on('initList', () => {
+        console.log('initList:', initList);
+        console.log('initNumber:', initNumber);
     })
 
     socket.on('sendy', () => {

@@ -1,14 +1,16 @@
 let initiator = false;
 let config = null;
-images = document.getElementById('images');
+let images = document.getElementById('images');
+let button = document.getElementById('initList');
 let partnerID;
 let downloaded = false;
 let pc;
 let dataChannel;
 
-
 const socket = io.connect('localhost:3000');
 // const socket = io.connect('http://ec2-18-188-104-222.us-east-2.compute.amazonaws.com:3000');
+
+button.addEventListener('click', () => socket.emit('initList'));
 
 socket.on('message', (input) => {
     signalingMessageCallback(input);
@@ -38,25 +40,8 @@ socket.on('needData', () => {
 
 ////////////////////////////////////////////////////// Photo functions //////////////////////////////////////////////////////
 
-// var results = document.getElementById('results'); 
-// fetch('/imagesAWS', { 
-//   method: 'GET', 
-//   headers: { 
-//     'Content-Type' : 'application/json'
-//   }
-// }).then((response) => {
-//   return response.json(); 
-// }).then((myjson) => { 
-//   for (let i = 0; i < myjson.length; i++) { 
-//     var div = document.createElement('div'); 
-//     var image = document.createElement('img'); 
-//     image.src = myjson[i]; 
-//     div.appendChild(image);
-//     results.append(div);
-//   }//end for
-// });
-
-let imageNames = ['cliff', 'gooddog', 'lava', 'ocean'];
+// let imageNames = ['cliff', 'gooddog', 'lava', 'ocean', '1'];
+let imageNames = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
 
 for (let i = 0; i < imageNames.length; i++) {
     let div = document.createElement('div');
@@ -65,6 +50,7 @@ for (let i = 0; i < imageNames.length; i++) {
     image.setAttribute('data-p2p', 'http://localhost:3000/images/' + imageNames[i]);
     // image.setAttribute('data-p2p', 'http://ec2-18-188-104-222.us-east-2.compute.amazonaws.com:3000/images/' + imageNames[i]);
     image.setAttribute('crossOrigin', 'anonymous');
+    image.className = 'images';
     div.appendChild(image);
     images.append(div);
 }
@@ -128,7 +114,7 @@ function receiveData() {
             setImage(imageData, counter);
             counter++;
             imageData = '';
-        } else if (dataString.slice(0, 7) === 'all-done') {
+        } else if (dataString.slice(0, 7) == 'all-done') {
             readyToSend();
         } else {
            imageData += dataString;
