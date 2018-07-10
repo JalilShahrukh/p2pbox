@@ -2,7 +2,6 @@ function Initiators() {
     this.list = {};
     this.head = false;
     this.tail = false;
-    this.nextUp = false;
 }
 
 function Node(sID, avail = true) {
@@ -35,7 +34,6 @@ Initiators.prototype.add = function(sID) {
     }  else { // If first node
         this.head = newNode.id;
         this.tail = newNode.id;
-        this.nextUp = newNode.id
         newNode.next = sID;
         newNode.prev = sID;
     }
@@ -47,7 +45,6 @@ Initiators.prototype.remove = function(sID) {
     list = this.list;
     tail = this.tail;
     head = this.head;
-    nextUp = this.nextUp;
     // Get linked IDs
     let prev = list[sID].prev;
     let next = list[sID].next;
@@ -55,10 +52,8 @@ Initiators.prototype.remove = function(sID) {
         // If only node, remove head/tail/nextUp
         this.head = false;
         this.tail = false;
-        this.nextUp = false;
     } else {
         // Change links
-        if (nextUp === sID) this.nextUp = next;
         if (tail === sID) this.tail = prev;
         if (head === sID) this.head = next;
         // Get linked nodes
