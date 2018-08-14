@@ -20,7 +20,7 @@ class Info extends Component {
             The set of standards that comprises WebRTC makes it possible to share data and perform teleconferencing peer-to-peer, without requiring that the user install plug-ins or any other third-party software. WebRTC consists of several interrelated APIs and protocols which work together to achieve this. </p>
           </div>
           <div className="col-md-5">
-            <img className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/Globe.gif" data-holder-rendered="true"></img>
+            <img id="" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/Globe.gif" data-holder-rendered="true"></img>
           </div>
         </div>
   
@@ -32,7 +32,7 @@ class Info extends Component {
             <p className="lead">After simulating high traffic volumes from AWS S3 buckets and measuring overall request volume, concurrent load, and maximum requests per second vs. latency of Data Pair library results showed NAT traversal times decreased by more than 2% when Data Pair was implemented.</p>
           </div>
           <div className="col-md-5 col-md-pull-7">
-            <img className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzUwMHg1MDAvYXV0bwpDcmVhdGVkIHdpdGggSG9sZGVyLmpzIDIuNi4wLgpMZWFybiBtb3JlIGF0IGh0dHA6Ly9ob2xkZXJqcy5jb20KKGMpIDIwMTItMjAxNSBJdmFuIE1hbG9waW5za3kgLSBodHRwOi8vaW1za3kuY28KLS0+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48IVtDREFUQVsjaG9sZGVyXzE2NDc1Yzk5YjQ3IHRleHQgeyBmaWxsOiNBQUFBQUE7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LWZhbWlseTpBcmlhbCwgSGVsdmV0aWNhLCBPcGVuIFNhbnMsIHNhbnMtc2VyaWYsIG1vbm9zcGFjZTtmb250LXNpemU6MjVwdCB9IF1dPjwvc3R5bGU+PC9kZWZzPjxnIGlkPSJob2xkZXJfMTY0NzVjOTliNDciPjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRUVFRUVFIi8+PGc+PHRleHQgeD0iMTg1LjEyNSIgeT0iMjYxLjEiPjUwMHg1MDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=" data-holder-rendered="true"></img>
+            <img id="rocket" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/rocket.png" data-holder-rendered="true"></img>
           </div>
         </div>
   
@@ -44,7 +44,7 @@ class Info extends Component {
             <p className="lead">WebRTC is a vibrant and dynamic ecosystem with a variety of open source projects and frameworks that can help you maximize efficiency in your products. Data Pair is one of the best out there and you can contribute to the source code yourself! Just star, fork and pull the repository. Reach out to us with feedback and any inquiries you may have.</p>
           </div>
           <div className="col-md-5">
-            <img className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/fork.gif" data-holder-rendered="true"></img>
+            <a href="https://github.com/DataPair/DataPair"><img id="blueGithub" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/github.png" data-holder-rendered="true"></img></a>
           </div>
         </div>
   
@@ -89,7 +89,7 @@ class Info extends Component {
 
         <footer>
           <p className="pull-right"><a href="#DataPair">Back to top</a></p>
-          <p id="copyright">© 2018 Data Pair, Inc</p>
+          <p id="copyright">© 2018 Data Pair</p>
         </footer> 
       </div>
     ); 
