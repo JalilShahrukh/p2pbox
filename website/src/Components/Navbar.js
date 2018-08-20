@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class NavBar extends Component { 
   render() { 
     return ( 
-      <nav className="navbar navbar-inverse navbar-fixed-top">
+      <nav className="navbar navbar-default navbar-fixed-top">
         <div className="container-fluid container topnav">
           <div className="nav navbar-nav navbar-left">
             <img className="navbar-brand" id="DataLogo" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/DataPair.png"></img>

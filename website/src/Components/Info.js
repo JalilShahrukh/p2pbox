@@ -20,7 +20,7 @@ class Info extends Component {
             The set of standards that comprises WebRTC makes it possible to share data and perform teleconferencing peer-to-peer, without requiring that the user install plug-ins or any other third-party software. WebRTC consists of several interrelated APIs and protocols which work together to achieve this. </p>
           </div>
           <div className="col-md-5">
-            <img id="" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/Globe.gif" data-holder-rendered="true"></img>
+            <img id="" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/WebRTC.jpg" data-holder-rendered="true"></img>
           </div>
         </div>
   
