@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  padding-top: 100px;
+  padding-top: 50px !important;
   font-family: sans-serif;
   background: black;
   background-image: linear-gradient(to bottom, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff);
@@ -27,7 +27,6 @@ h2 {
   padding-left: 0px;
   width: 100% !important;
   border: darkblue !important; 
-  margin-bottom: 100px !important;
   background-image: linear-gradient(to bottom, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff) !important;
 } 
 
@@ -58,6 +57,7 @@ span {
 }
 
 #rocket { 
+  margin-top: 40px; 
   height: 350px !important;
   width: 350px !important;
 }

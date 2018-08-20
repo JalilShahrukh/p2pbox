@@ -5,9 +5,9 @@ class Info extends Component {
     return (
       <div className="container marketing">
 
-      <hr className="featurette-divider"></hr>
+      <hr id="Features" className="featurette-divider"></hr>
 
-        <div className="row featurette" id="Features">
+        <div className="row featurette">
           <div className="col-md-7">
             <h2 className="featurette-heading">Features.</h2> 
             {/* <span className="text-muted">It'll blow your mind.</span></h2> */}
@@ -20,13 +20,13 @@ class Info extends Component {
             The set of standards that comprises WebRTC makes it possible to share data and perform teleconferencing peer-to-peer, without requiring that the user install plug-ins or any other third-party software. WebRTC consists of several interrelated APIs and protocols which work together to achieve this. </p>
           </div>
           <div className="col-md-5">
-            <img id="" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/WebRTC.jpg" data-holder-rendered="true"></img>
+            <img id="WebRTClogo" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/WebRTC.jpg" data-holder-rendered="true"></img>
           </div>
         </div>
   
-        <hr className="featurette-divider"></hr>
+        <hr id="Results" className="featurette-divider"></hr>
   
-        <div className="row featurette" id="Results">
+        <div className="row featurette">
           <div className="col-md-7 col-md-push-5">
             <h2 className="featurette-heading">Results.</h2> 
             <p className="lead">After simulating high traffic volumes from AWS S3 buckets and measuring overall request volume, concurrent load, and maximum requests per second vs. latency of Data Pair library results showed NAT traversal times decreased by more than 2% when Data Pair was implemented.</p>
@@ -36,9 +36,9 @@ class Info extends Component {
           </div>
         </div>
   
-        <hr className="featurette-divider"></hr>
+        <hr id="Started" className="featurette-divider"></hr>
   
-        <div className="row featurette" id="Contribute">
+        <div className="row featurette">
           <div className="col-md-7">
             <h2 className="featurette-heading">Getting started. <span className="text-muted">npm install data-pair-server</span></h2>
             <p className="lead">Data Pair is easy to implement: a node module for your server file, an UNPKG script for the client side, and custom tags for images that you'd like distributed through the network.</p>
