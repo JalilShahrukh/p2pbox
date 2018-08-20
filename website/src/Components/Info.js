@@ -40,8 +40,12 @@ class Info extends Component {
   
         <div className="row featurette" id="Contribute">
           <div className="col-md-7">
-            <h2 className="featurette-heading">Help us improve. <span className="text-muted">Star, fork and pull.</span></h2>
-            <p className="lead">WebRTC is a vibrant and dynamic ecosystem with a variety of open source projects and frameworks that can help you maximize efficiency in your products. Data Pair is one of the best out there and you can contribute to the source code yourself! Just star, fork and pull the repository. Reach out to us with feedback and any inquiries you may have.</p>
+            <h2 className="featurette-heading">Getting started. <span className="text-muted">npm install data-pair-server</span></h2>
+            <p className="lead">Data Pair is easy to implement: a node module for your server file, an UNPKG script for the client side, and custom tags for images that you'd like distributed through the network.</p>
+            <p className="lead">Once you've done this, Data Pair takes care of the rest: maintaining the network of available peers that can send assets and choosing one to pair with an incoming client, using WebSockets to automate WebRTC signaling between peers, and handling transmission of images through RTCDataChannel.</p>
+            <div id="started">
+              <img src="https://s3.amazonaws.com/boxchatprofiles/otherimages/Getting+started.png"></img>
+            </div>
           </div>
           <div className="col-md-5">
             <a href="https://github.com/DataPair/DataPair"><img id="blueGithub" className="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/github.png" data-holder-rendered="true"></img></a>
@@ -61,7 +65,7 @@ class Info extends Component {
           </div>
 
           <div className="col-sm-3">
-            <img className="img-circle" src="https://s3.amazonaws.com/boxchatprofiles/profile/David.jpg" alt="David" width="140" height="140"></img>
+            <img className="img-circle" src="https://s3.amazonaws.com/boxchatprofiles/profile/DavidD.jpg" alt="David" width="140" height="140"></img>
             <h3>Dave DeStefano</h3>
             <a class="btn btn-social-icon btn-github" href="https://github.com/david-dest01"><span class="fa fa-github"></span></a>
             <span></span>
@@ -88,8 +92,10 @@ class Info extends Component {
         <hr className="featurette-divider"></hr>
 
         <footer>
-          <p className="pull-right"><a href="#DataPair">Back to top</a></p>
-          <p id="copyright">© 2018 Data Pair</p>
+          <div id="footerimg">
+            <img id="dataLogoFooter" src="https://s3.amazonaws.com/boxchatprofiles/otherimages/DataPair.png"></img>
+          </div>
+          <p id="copyright">© Copyright 2018 <a href="https://github.com/DataPair/DataPair"><strong>Data Pair</strong></a>. Distributed under the <a href="https://github.com/DataPair/DataPair/blob/master/license.md"><strong>MIT License</strong></a>.</p>
         </footer> 
       </div>
     ); 

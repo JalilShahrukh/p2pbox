@@ -12,7 +12,7 @@ class NavBar extends Component {
           <div className="nav navbar-nav navbar-right navbar-collapse collapse">
             <a className="navbar-brand" href="#Features">Features</a>
             <a className="navbar-brand" href="#Results">Results</a>
-            <a className="navbar-brand" href="#Contribute">Contribute</a>
+            <a className="navbar-brand" href="#Contribute">Get Started</a>
             <a className="navbar-brand" href="#Team">Team</a>
             <div className="btn">
               <a className="github-button" href="https://github.com/DataPair/DataPair" data-show-count="true" aria-label="Follow Data Pair on GitHub">Star</a>

@@ -76,12 +76,27 @@ span {
   width: 400px !important; 
 }
 
+#started { 
+  clear: both;
+}
+
 #Team { 
   text-align: center;
 }
 
+#footerimg { 
+  text-align: center; 
+  margin-bottom: 10px; 
+}
+
+#dataLogoFooter { 
+  height: 25px;
+  width: auto; 
+}
+
 #copyright { 
-  color: lightblue; 
+  color: grey; 
+  text-align: center;
 }
 
 a { 
