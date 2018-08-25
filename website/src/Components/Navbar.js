@@ -11,7 +11,7 @@ class NavBar extends Component {
           
           <div className="nav navbar-nav navbar-right navbar-collapse collapse">
             <a className="navbar-brand" href="#Features">Features</a>
-            <a className="navbar-brand" href="#Results">Results</a>
+            {/* <a className="navbar-brand" href="#Results">Results</a> */}
             <a className="navbar-brand" href="#Started">Get Started</a>
             <a className="navbar-brand" href="#Team">Team</a>
             <div className="btn">
